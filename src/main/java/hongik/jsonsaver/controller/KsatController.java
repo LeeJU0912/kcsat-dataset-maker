@@ -13,6 +13,7 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
@@ -21,17 +22,50 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Controller
-@RequestMapping("/ksat/addForm")
+@RequestMapping("/ksat")
 @RequiredArgsConstructor
 public class KsatController {
     private final KsatRepository ksatRepository;
 
-    @GetMapping
+    @GetMapping("/addForm")
     public String addForm(Model model) {
         AtomicLong size = ksatRepository.getSize();
         model.addAttribute("size", size);
         model.addAttribute("download", ksatRepository);
         return "addForm";
+    }
+
+    @PostMapping("/addForm")
+    public String addData(Ksat ksat, RedirectAttributes redirectAttributes) {
+        ksatRepository.save(ksat);
+        ksatRepository.makeFile();
+
+        log.info("Num : {}, Question : {}", ksatRepository.getSize(), ksat.getQuestion());
+
+        redirectAttributes.addAttribute("ksatId", ksatRepository.getSize());
+        redirectAttributes.addAttribute("saveStatus", true);
+        return "redirect:addForm";
+    }
+
+    @GetMapping("/deleteForm")
+    public String deleteForm(Model model) {
+        return "deleteForm";
+    }
+
+    @PostMapping("/deleteForm")
+    public String deleteData(@RequestParam String id, RedirectAttributes redirectAttributes) {
+
+        if (ksatRepository.deleteData(id)) {
+            log.info("Delete ID : {}", id);
+
+            redirectAttributes.addAttribute("idx", id);
+            redirectAttributes.addAttribute("deleteStatus", true);
+        }
+        else {
+            log.info("Delete Error");
+        }
+
+        return "redirect:deleteForm";
     }
 
     @GetMapping("/download")
@@ -56,17 +90,5 @@ public class KsatController {
         }
 
         return entity;
-    }
-
-    @PostMapping
-    public String addQuestion(Ksat ksat, RedirectAttributes redirectAttributes) {
-        ksatRepository.save(ksat);
-        ksatRepository.makeFile();
-
-        log.info("Num : {}, Question : {}", ksatRepository.getSize(), ksat.getQuestion());
-
-        redirectAttributes.addAttribute("ksatId", ksatRepository.getSize());
-        redirectAttributes.addAttribute("saveStatus", true);
-        return "redirect:addForm";
     }
 }

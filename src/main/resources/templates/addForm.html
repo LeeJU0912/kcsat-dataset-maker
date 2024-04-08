@@ -23,7 +23,18 @@
 
     <h2 th:if="${param.saveStatus}" th:text="|${param.ksatId}번째 문제 저장 완료!|" th:align="center"></h2>
 
-    <h4 class="mb-3">정보 입력</h4>
+    <hr class="my-4">
+
+    <div class="row">
+        <div class="col">
+            <h4 class="mb-3">정보 입력</h4>
+        </div>
+        <div class="col">
+            <button class="w-100 btn btn-secondary btn-lg" onclick=""
+                    th:onclick="|location.href='@{/ksat/deleteForm}'|"
+                    type="button">문제 삭제</button>
+        </div>
+    </div>
 
     <form action="addForm.html" th:action method="post">
         <div>
@@ -61,6 +72,10 @@
             <input type="text" id="question" name="question" class="form-control" placeholder="질문을 입력하세요">
         </div>
         <div>
+            <label for="translate">원문</label>
+            <input type="text" id="translate" name="translate" class="form-control" placeholder="원문을 입력하세요">
+        </div>
+        <div>
             <label for="mainText">본문</label>
             <input type="text" id="mainText" name="mainText" class="form-control" placeholder="본문을 입력하세요">
         </div>
@@ -78,11 +93,11 @@
 
         <div class="row">
             <div class="col">
-                <button class="w-100 btn btn-primary btn-lg" type="submit" value="register">정보 등록</button>
+                <button class="w-100 btn btn-primary btn-lg" type="submit" value="register">등록</button>
             </div>
             <div class="col">
-                <button class="w-100 btn btn-secondary btn-lg" onclick=""
-                        th:onclick="|location.href='@{/ksat/addForm/download}'|"
+                <button class="w-100 btn btn-success btn-lg" onclick=""
+                        th:onclick="|location.href='@{/ksat/download}'|"
                         type="button">JSON 다운로드</button>
             </div>
         </div>
