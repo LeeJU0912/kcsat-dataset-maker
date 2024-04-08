@@ -36,7 +36,7 @@ public class KsatController {
 
     @GetMapping("/download")
     public ResponseEntity<byte[]> download() {
-        String path = "/Users/leeju/IdeaProjects/json-saver/src/main/resources/dataset.json";
+        String path = "C:\\Users\\Apple\\IdeaProjects\\json-saver\\src\\main\\resources\\dataset.json";
         File file = new File(path);
 
         byte[] result;
