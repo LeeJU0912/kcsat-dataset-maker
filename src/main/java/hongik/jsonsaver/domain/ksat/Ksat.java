@@ -61,4 +61,13 @@ public class Ksat {
 
         this.choice = stringBuilder.toString();
     }
+
+    public void fixAnswer() {
+        this.answer = "(" + this.answer + ")";
+    }
+
+    public void fixAll() {
+        fixChoiceNumberFont();
+        fixAnswer();
+    }
 }

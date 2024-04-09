@@ -10,15 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 @Controller
@@ -29,7 +25,7 @@ public class KsatController {
 
     @GetMapping("/addForm")
     public String addForm(Model model) {
-        AtomicLong size = ksatRepository.getSize();
+        Long size = ksatRepository.getSize();
         model.addAttribute("size", size);
         model.addAttribute("download", ksatRepository);
         return "addForm";
@@ -54,15 +50,16 @@ public class KsatController {
 
     @PostMapping("/deleteForm")
     public String deleteData(@RequestParam String id, RedirectAttributes redirectAttributes) {
-
-        if (ksatRepository.deleteData(id)) {
+        if (!id.isEmpty() && ksatRepository.deleteData(id)) {
             log.info("Delete ID : {}", id);
 
             redirectAttributes.addAttribute("idx", id);
-            redirectAttributes.addAttribute("deleteStatus", true);
+            redirectAttributes.addAttribute("deleteSuccess", true);
         }
         else {
             log.info("Delete Error");
+
+            redirectAttributes.addAttribute("deleteFail", true);
         }
 
         return "redirect:deleteForm";

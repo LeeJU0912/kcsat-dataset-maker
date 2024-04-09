@@ -14,6 +14,7 @@ public class KsatRepository {
     private static final ConcurrentHashMap<String, LinkedHashSet<LinkedHashMap>> store = new ConcurrentHashMap<>();
 
     private static AtomicLong sequence = new AtomicLong();
+    private static AtomicLong deleteSequence = new AtomicLong();
 
     private static String[] type = {"글의 내용 불일치",
             "글의 목적",
@@ -42,7 +43,7 @@ public class KsatRepository {
 
     public Ksat save(Ksat ksat) {
 
-        ksat.fixChoiceNumberFont();
+        ksat.fixAll();
 
         LinkedHashMap<String, String> temp = new LinkedHashMap<>();
 
@@ -68,11 +69,14 @@ public class KsatRepository {
 
     public boolean deleteData(String id) {
         for (String s : type) {
-            for (LinkedHashMap linkedHashMap : store.get(s)) {
-                if (linkedHashMap.containsKey("id") && linkedHashMap.containsValue(id)) {
-                    store.get(s).remove(linkedHashMap);
-                    makeFile();
-                    return true;
+            if (store.containsKey(s)) {
+                for (LinkedHashMap linkedHashMap : store.get(s)) {
+                    if (linkedHashMap.containsKey("id") && linkedHashMap.containsValue(id)) {
+                        store.get(s).remove(linkedHashMap);
+                        deleteSequence.incrementAndGet();
+                        makeFile();
+                        return true;
+                    }
                 }
             }
         }
@@ -95,8 +99,8 @@ public class KsatRepository {
     }
 
 
-    public AtomicLong getSize() {
-        return sequence;
+    public Long getSize() {
+        return sequence.get() - deleteSequence.get();
     }
 
     public void clearStore() {
