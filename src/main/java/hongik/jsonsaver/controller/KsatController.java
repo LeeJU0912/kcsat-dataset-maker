@@ -33,13 +33,17 @@ public class KsatController {
 
     @PostMapping("/addForm")
     public String addData(Ksat ksat, RedirectAttributes redirectAttributes) {
+        if (ksatRepository.chkBlankInput(ksat)) {
+            redirectAttributes.addAttribute("saveFail", true);
+            return "redirect:addForm";
+        }
         ksatRepository.save(ksat);
         ksatRepository.makeFile();
 
         log.info("Num : {}, Question : {}", ksatRepository.getSize(), ksat.getQuestion());
 
         redirectAttributes.addAttribute("ksatId", ksatRepository.getSize());
-        redirectAttributes.addAttribute("saveStatus", true);
+        redirectAttributes.addAttribute("saveSuccess", true);
         return "redirect:addForm";
     }
 
@@ -81,8 +85,10 @@ public class KsatController {
 
             entity = new ResponseEntity<>(result, httpHeaders, HttpStatus.OK);
 
+            log.info("Download Complete :)");
 
         } catch (IOException e) {
+            log.info("Download Failed :(");
             e.printStackTrace();
         }
 

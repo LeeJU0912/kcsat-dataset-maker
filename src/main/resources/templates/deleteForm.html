@@ -32,8 +32,8 @@
 <!--    <h2 th:if="${param.deleteStatus} == true" th:text="|${param.idx}번 문제 삭제 완료!|" th:align="center"></h2>-->
 <!--    <h2 th:if="${param.deleteStatus} == false" th:text="'삭제 실패. 존재하지 않는 id입니다.'" th:align="center"></h2>-->
 
-    <h2 th:if="${param.deleteSuccess}" th:text="|${param.idx}번 문제 삭제 완료!|" th:align="center"></h2>
-    <h2 th:if="${param.deleteFail}" th:text="'삭제 실패. 존재하지 않는 id입니다.'" th:align="center"></h2>
+    <h3 th:if="${param.deleteSuccess}" th:text="|${param.idx}번 문제 삭제 완료!|" th:align="center"></h3>
+    <h3 th:if="${param.deleteFail}" th:text="'삭제 실패. 존재하지 않는 id입니다.'" th:align="center"></h3>
 
     <hr class="my-4">
 

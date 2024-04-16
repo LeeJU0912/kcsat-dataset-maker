@@ -21,7 +21,8 @@
 
     <h4 th:text="|현재 저장된 문제 개수 : ${size}|" th:align="center"></h4>
 
-    <h2 th:if="${param.saveStatus}" th:text="|${param.ksatId}번째 문제 저장 완료!|" th:align="center"></h2>
+    <h3 th:if="${param.saveSuccess}" th:text="|${param.ksatId}번째 문제 저장 완료!|" th:align="center"></h3>
+    <h3 th:if="${param.saveFail}" th:text="'저장 실패. 공백 항목이 있으면 안됩니다.'" th:align="center"></h3>
 
     <hr class="my-4">
 
@@ -51,7 +52,7 @@
                 <option>문맥에 맞는 낱말 선택</option>
                 <option>문장이 들어가기에 가장 적절한 곳</option>
                 <option>밑줄친 문장이 의미하는 바</option>
-                <option>빈칸 A, B에 들아갈 말</option>
+                <option>빈칸 A, B에 들어갈 말</option>
                 <option>빈칸에 들어갈 말</option>
                 <option>심경</option>
                 <option>심경 변화</option>

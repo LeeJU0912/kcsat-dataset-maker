@@ -16,7 +16,9 @@ public class KsatRepository {
     private static AtomicLong sequence = new AtomicLong();
     private static AtomicLong deleteSequence = new AtomicLong();
 
-    private static String[] type = {"글의 내용 불일치",
+    private static String[] type = {
+            "!!! 필수 선택 !!!",
+            "글의 내용 불일치",
             "글의 목적",
             "글의 요지",
             "글의 제목",
@@ -26,7 +28,7 @@ public class KsatRepository {
             "문맥에 맞는 낱말 선택",
             "문장이 들어가기에 가장 적절한 곳",
             "밑줄친 문장이 의미하는 바",
-            "빈칸 A, B에 들아갈 말",
+            "빈칸 A, B에 들어갈 말",
             "빈칸에 들어갈 말",
             "심경",
             "심경 변화",
@@ -39,7 +41,8 @@ public class KsatRepository {
             "표의 내용 불일치",
             "필자가 주장하는 바",
             "흐름과 관계 없는 문장",
-            "A에 이어질 내용의 순서"};
+            "A에 이어질 내용의 순서"
+    };
 
     public Ksat save(Ksat ksat) {
 
@@ -82,6 +85,15 @@ public class KsatRepository {
         }
 
         return false;
+    }
+
+    public boolean chkBlankInput(Ksat ksat) {
+        if (ksat.getAnswer().isEmpty()
+                || ksat.getQuestion().isEmpty()
+                || ksat.getTranslate().isEmpty()
+                || ksat.getMainText().isEmpty()
+                || ksat.getChoice().isEmpty()) return true;
+        else return false;
     }
 
     public void makeFile() {
