@@ -195,7 +195,7 @@ Dataset의 최종본에 해당하는 JSON Format. 수집의 용이함을 위해 
 
 **[실행 화면]**
 
-[!Result](https://github.com/LeeJU0912/json-saver/blob/master/screenshot.png)
+![Result](https://github.com/LeeJU0912/json-saver/blob/master/screenshot.png)
 
 **[History]**
 
