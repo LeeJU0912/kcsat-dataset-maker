@@ -4,34 +4,41 @@ import hongik.jsonsaver.domain.ksat.Ksat;
 import hongik.jsonsaver.domain.ksat.KsatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
-import java.io.IOException;
+import java.net.MalformedURLException;
 
 @Slf4j
 @Controller
-@RequestMapping("/ksat")
 @RequiredArgsConstructor
 public class KsatController {
     private final KsatRepository ksatRepository;
 
-    @GetMapping("/addForm")
+    @GetMapping("")
+    public String redirect() {
+        return "redirect:/ksat/addForm";
+    }
+
+    @GetMapping("/ksat/addForm")
     public String addForm(Model model) {
         Long size = ksatRepository.getSize();
         model.addAttribute("size", size);
         model.addAttribute("download", ksatRepository);
+
+        log.info("Connected :)");
+
         return "addForm";
     }
 
-    @PostMapping("/addForm")
+    @PostMapping("/ksat/addForm")
     public String addData(Ksat ksat, RedirectAttributes redirectAttributes) {
         if (ksatRepository.chkBlankInput(ksat)) {
             redirectAttributes.addAttribute("saveFail", true);
@@ -47,12 +54,12 @@ public class KsatController {
         return "redirect:addForm";
     }
 
-    @GetMapping("/deleteForm")
-    public String deleteForm(Model model) {
+    @GetMapping("/ksat/deleteForm")
+    public String deleteForm() {
         return "deleteForm";
     }
 
-    @PostMapping("/deleteForm")
+    @PostMapping("/ksat/deleteForm")
     public String deleteData(@RequestParam String id, RedirectAttributes redirectAttributes) {
         if (!id.isEmpty() && ksatRepository.deleteData(id)) {
             log.info("Delete ID : {}", id);
@@ -69,29 +76,16 @@ public class KsatController {
         return "redirect:deleteForm";
     }
 
-    @GetMapping("/download")
-    public ResponseEntity<byte[]> download() {
-        String path = "C:\\Users\\Apple\\IdeaProjects\\json-saver\\src\\main\\resources\\dataset.json";
-        File file = new File(path);
+    @GetMapping("/ksat/download")
+    public ResponseEntity<Resource> download() throws MalformedURLException {
+        ClassPathResource filePath = new ClassPathResource("src/main/resources/dataset.json");
 
-        byte[] result;
-        ResponseEntity<byte[]> entity = null;
+        UrlResource resource = new UrlResource("file:" + filePath.getPath());
 
-        try {
-            result = FileCopyUtils.copyToByteArray(file);
+        log.info("Download Complete :)");
 
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add("Content-Disposition", "attachment; filename=" + "dataset.json");
-
-            entity = new ResponseEntity<>(result, httpHeaders, HttpStatus.OK);
-
-            log.info("Download Complete :)");
-
-        } catch (IOException e) {
-            log.info("Download Failed :(");
-            e.printStackTrace();
-        }
-
-        return entity;
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + "dataset.json")
+                .body(resource);
     }
 }

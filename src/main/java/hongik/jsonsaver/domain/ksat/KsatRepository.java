@@ -1,6 +1,8 @@
 package hongik.jsonsaver.domain.ksat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
 
 import java.io.FileWriter;
@@ -9,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Slf4j
 @Repository
 public class KsatRepository {
     private static final ConcurrentHashMap<String, LinkedHashSet<LinkedHashMap>> store = new ConcurrentHashMap<>();
@@ -44,9 +47,9 @@ public class KsatRepository {
             "A에 이어질 내용의 순서"
     };
 
-    public Ksat save(Ksat ksat) {
+    public Ksat save(Ksat input) {
 
-        ksat.fixAll();
+        Ksat ksat = fixAll(input);
 
         LinkedHashMap<String, String> temp = new LinkedHashMap<>();
 
@@ -61,10 +64,10 @@ public class KsatRepository {
             store.get(ksat.getType()).add(temp);
         }
         else {
-            LinkedHashSet<LinkedHashMap> temp2 = new LinkedHashSet<>();
-            temp2.add(temp);
+            LinkedHashSet<LinkedHashMap> makeType = new LinkedHashSet<>();
+            makeType.add(temp);
 
-            store.put(ksat.getType(), temp2);
+            store.put(ksat.getType(), makeType);
         }
 
         return ksat;
@@ -88,16 +91,17 @@ public class KsatRepository {
     }
 
     public boolean chkBlankInput(Ksat ksat) {
-        if (ksat.getAnswer().isEmpty()
+        return ksat.getAnswer().isEmpty()
                 || ksat.getQuestion().isEmpty()
                 || ksat.getTranslate().isEmpty()
                 || ksat.getMainText().isEmpty()
-                || ksat.getChoice().isEmpty()) return true;
-        else return false;
+                || ksat.getChoice().isEmpty();
     }
 
     public void makeFile() {
-        try (FileWriter fileWriter = new FileWriter("C:\\Users\\Apple\\IdeaProjects\\json-saver\\src\\main\\resources\\dataset.json")) {
+        ClassPathResource filePath = new ClassPathResource("src/main/resources/dataset.json");
+
+        try (FileWriter fileWriter = new FileWriter(filePath.getPath())) {
             ObjectMapper objectMapper = new ObjectMapper();
 
             String jsonStr = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(store);
@@ -106,10 +110,9 @@ public class KsatRepository {
             fileWriter.flush();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("MakeFile Error : ", e);
         }
     }
-
 
     public Long getSize() {
         return sequence.get() - deleteSequence.get();
@@ -117,5 +120,56 @@ public class KsatRepository {
 
     public void clearStore() {
         store.clear();
+    }
+
+    public Ksat fixChoiceNumberFont(Ksat ksat) {
+        StringBuilder stringBuilder = new StringBuilder(ksat.getChoice());
+
+        for (int i = 0; i < stringBuilder.length(); i++) {
+            if (stringBuilder.charAt(i) == '①') {
+                stringBuilder.replace(i, i + 1, "(");
+                stringBuilder.insert(i + 1, "1)");
+            }
+            else if (stringBuilder.charAt(i) == '②') {
+                stringBuilder.replace(i, i + 1, "(");
+                stringBuilder.insert(i + 1, "2)");
+                stringBuilder.insert(i - 1, "\n");
+                i++;
+            }
+            else if (stringBuilder.charAt(i) == '③') {
+                stringBuilder.replace(i, i + 1, "(");
+                stringBuilder.insert(i + 1, "3)");
+                stringBuilder.insert(i - 1, "\n");
+                i++;
+            }
+            else if (stringBuilder.charAt(i) == '④') {
+                stringBuilder.replace(i, i + 1, "(");
+                stringBuilder.insert(i + 1, "4)");
+                stringBuilder.insert(i - 1, "\n");
+                i++;
+            }
+            else if (stringBuilder.charAt(i) == '⑤') {
+                stringBuilder.replace(i, i + 1, "(");
+                stringBuilder.insert(i + 1, "5)");
+                stringBuilder.insert(i - 1, "\n");
+                i++;
+            }
+        }
+        stringBuilder.insert(stringBuilder.length(), "\n");
+
+        ksat.setChoice(stringBuilder.toString());
+
+        return ksat;
+    }
+
+    public Ksat fixAnswer(Ksat ksat) {
+        ksat.setAnswer("(" + ksat.getAnswer() + ")");
+
+        return ksat;
+    }
+
+    public Ksat fixAll(Ksat ksat) {
+
+        return fixAnswer(fixChoiceNumberFont(ksat));
     }
 }
