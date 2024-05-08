@@ -2,11 +2,13 @@ JSON-Maker
 
 
 **[주요 개발 기간]** 2024/04/06 ~ 2024/04/08
+
 ---
 **[목표]**
 
 * 수능 영어 LLM Dataset 수집을 위하여 제작.
 * 웹에서 입력하면 json 방식으로 서버에 전송하고, json 데이터 그대로 파일로 저장
+
 ---
 **[문제 유형 리스트]**
 
@@ -192,10 +194,12 @@ Dataset의 최종본에 해당하는 JSON Format. 수집의 용이함을 위해 
 보기 : String
 
 정답 : String
+
 ---
 **[실행 화면]**
 
 ![Result](https://github.com/LeeJU0912/json-saver/blob/master/screenshot.png)
+
 ---
 **[History]**
 
