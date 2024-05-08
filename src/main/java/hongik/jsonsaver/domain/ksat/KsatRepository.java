@@ -19,7 +19,7 @@ public class KsatRepository {
     private static AtomicLong sequence = new AtomicLong();
     private static AtomicLong deleteSequence = new AtomicLong();
 
-    private static String[] type = {
+    private static final String[] type = {
             "!!! 필수 선택 !!!",
             "글의 내용 불일치",
             "글의 목적",
